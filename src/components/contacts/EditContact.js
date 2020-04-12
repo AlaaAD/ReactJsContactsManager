@@ -1,14 +1,30 @@
 import React, { Component } from 'react';
 import TextInputGroup from '../layout/TextInputGroup';
+import { connect } from 'react-redux'
+import { getContact,updateContact } from '../../actions/ContactActions';
 
 class EditContact extends Component {
+
+  componentDidMount(){
+    const {id} =this.props.match.params
+    this.props.getContact(id);
+  }
+  componentWillReceiveProps(nextProps,nextState){
+    const {name,email,phone} = nextProps.contact
+    this.setState({
+      name,
+      email,
+      phone
+    })
+  }
   state = {
     name: '',
     email: '',
     phone: '',
     errors: {}
   };
-
+  
+   
   onSubmit = (e) => {
     e.preventDefault();
 
@@ -29,16 +45,19 @@ class EditContact extends Component {
       this.setState({ errors: { phone: 'Phone is required' } });
       return;
     }
-
-    const updContact = {
+    const {id} =this.props.match.params
+    const updateContact = {
+      
+      id,
       name,
       email,
       phone
     };
 
-    const { id } = this.props.match.params;
+  
 
     //// UPDATE CONTACT ////
+    this.props.updateContact(updateContact);
 
     // Clear State
     this.setState({
@@ -98,4 +117,10 @@ class EditContact extends Component {
   }
 }
 
-export default EditContact;
+const mapStateToProps = (state) => {    // recupérer le state a partir de redux et le stoker dans le propos contacts
+  return {
+    contact: state.myContacts.contact
+  }
+}
+
+export default connect(mapStateToProps,{getContact,updateContact})(EditContact);

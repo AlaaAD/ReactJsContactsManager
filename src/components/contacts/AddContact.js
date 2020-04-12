@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import TextInputGroup from '../layout/TextInputGroup';
+import { connect } from 'react-redux'
+import { addContact } from '../../actions/ContactActions';
+
 
 class AddContact extends Component {
   state = {
@@ -10,7 +13,7 @@ class AddContact extends Component {
   };
 
   onSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Bloquer la propagation
 
     const { name, email, phone } = this.state;
 
@@ -31,12 +34,14 @@ class AddContact extends Component {
     }
 
     const newContact = {
+      
       name,
       email,
       phone
     };
 
     //// SUBMIT CONTACT ////
+    this.props.addContact(newContact);
 
     // Clear State
     this.setState({
@@ -46,10 +51,10 @@ class AddContact extends Component {
       errors: {}
     });
 
-    this.props.history.push('/');
+    this.props.history.push('/'); // redirection vers la racine HOME
   };
 
-  onChange = e => this.setState({ [e.target.name]: e.target.value });
+  onChange = e => this.setState({ [e.target.name]: e.target.value }); // changer le text de tout les imput simultanément
 
   render() {
     const { name, email, phone, errors } = this.state;
@@ -96,4 +101,4 @@ class AddContact extends Component {
   }
 }
 
-export default AddContact;
+export default connect(null, { addContact })(AddContact);
